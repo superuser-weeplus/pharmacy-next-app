@@ -3,6 +3,20 @@
 import { signIn, signOut, useSession } from "next-auth/react"
 import { usePlatform } from "@/components/platform-detector"
 
+interface AuthResponse {
+  success: boolean
+  message: string
+  data?: {
+    user: {
+      id: string
+      name: string
+      email: string
+      role: string
+    }
+    token: string
+  }
+}
+
 export function useAuth() {
   const { data: session, status } = useSession()
   const { platform, isLiff } = usePlatform()
@@ -70,5 +84,26 @@ export function useAuth() {
     user: session?.user,
     login,
     logout,
+  }
+}
+
+export async function login(email: string, password: string): Promise<AuthResponse> {
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('Login error:', error)
+    return {
+      success: false,
+      message: 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ',
+    }
   }
 }

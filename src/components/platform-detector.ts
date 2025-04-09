@@ -50,3 +50,17 @@ export function PlatformProvider({ children }: { children: React.ReactNode }) {
 export function usePlatform() {
   return useContext(PlatformContext)
 }
+
+export function isLineBrowser(userAgent: string): boolean {
+  return /Line/i.test(userAgent)
+}
+
+export function isMobileBrowser(userAgent: string): boolean {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+}
+
+export function getPlatform(userAgent: string): 'line' | 'mobile' | 'desktop' {
+  if (isLineBrowser(userAgent)) return 'line'
+  if (isMobileBrowser(userAgent)) return 'mobile'
+  return 'desktop'
+}

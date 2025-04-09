@@ -2,9 +2,26 @@ import type { Adapter } from "next-auth/adapters"
 import type { SanityClient } from "next-sanity"
 import { v4 as uuidv4 } from "uuid"
 
+interface SanityUser {
+  _id: string
+  _type: string
+  name: string
+  email: string
+  image?: string
+  role: string
+}
+
+interface SanitySession {
+  _id: string
+  _type: string
+  sessionToken: string
+  userId: string
+  expires: string
+}
+
 export function SanityAdapter(client: SanityClient): Adapter {
   return {
-    async createUser(user: any) {
+    async createUser(user: SanityUser) {
       const newUser = {
         _id: `user.${uuidv4()}`,
         _type: "user",
@@ -42,7 +59,7 @@ export function SanityAdapter(client: SanityClient): Adapter {
       }
     },
 
-    async getUserByEmail(email) {
+    async getUserByEmail(email: string): Promise<SanityUser | null> {
       const user = await client.fetch(`*[_type == "user" && email == $email][0]`, { email })
       if (!user) return null
 
@@ -137,7 +154,7 @@ export function SanityAdapter(client: SanityClient): Adapter {
       })
     },
 
-    async createSession(session) {
+    async createSession(session: SanitySession): Promise<SanitySession> {
       const newSession = {
         _id: `session.${uuidv4()}`,
         _type: "session",

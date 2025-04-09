@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import Image from "next/image"
 import { useEffect, useState } from "react"
 
 // เพิ่ม type definitions สำหรับ LIFF
@@ -64,11 +65,14 @@ export default function LiffPage() {
               <>
                 <p>สวัสดี {profile.displayName}</p>
                 {profile.pictureUrl && (
-                  <img 
-                    src={profile.pictureUrl} 
-                    alt="Profile" 
-                    className="w-20 h-20 rounded-full"
-                  />
+                  <div className="relative w-20 h-20">
+                    <Image 
+                      src={profile.pictureUrl} 
+                      alt="Profile" 
+                      fill
+                      className="rounded-full object-cover"
+                    />
+                  </div>
                 )}
               </>
             ) : (

@@ -4,13 +4,9 @@ import * as React from "react"
 
 // กำหนด interface สำหรับ Toast
 interface ToastProps {
-  variant?: "default" | "destructive"
-  title?: React.ReactNode
-  description?: React.ReactNode
-  action?: React.ReactNode
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
-  duration?: number
+  title?: string
+  description?: string
+  action?: ToastActionElement
 }
 
 interface ToastActionElement extends React.ReactElement {}

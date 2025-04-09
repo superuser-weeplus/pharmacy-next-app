@@ -14,6 +14,8 @@ export function Header() {
   const [cartCount, setCartCount] = useState(0)
   const [isClient, setIsClient] = useState(false)
   const pathname = usePathname()
+  const { data: session, status } = useSession()
+  const isAdmin = session?.user?.role === "admin"
 
   // ตรวจสอบว่าเป็น client-side หรือไม่
   useEffect(() => {
@@ -26,10 +28,6 @@ export function Header() {
       setCartCount(getItemCount())
     }
   }, [getItemCount, isClient])
-
-  // ตรวจสอบสิทธิ์ admin โดยใช้ useSession จาก NextAuth
-  const { data: session, status } = useSession()
-  const isAdmin = session?.user?.role === "admin"
 
   return (
     <header className="w-full">

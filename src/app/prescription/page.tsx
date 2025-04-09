@@ -347,7 +347,7 @@ export default function PrescriptionPage() {
                 {/* แท็บตรวจสอบรายการ */}
                 <TabsContent value="review" className="mt-4">
                   <div className="bg-muted/30 rounded-lg p-4">
-                    <h2 className="text-lg font-medium mb-4">ตรวจสอบรายกา��ใบสั่ง</h2>
+                    <h2 className="text-lg font-medium mb-4">ตรวจสอบรายการในใบสั่ง</h2>
 
                     {cart.length === 0 ? (
                       <div className="text-center py-8">
@@ -360,7 +360,7 @@ export default function PrescriptionPage() {
                           <table className="w-full">
                             <thead>
                               <tr className="border-b">
-                                <th className="py-2 px-4 text-left">��ายการยา</th>
+                                <th className="py-2 px-4 text-left">รายการยา</th>
                                 <th className="py-2 px-4 text-center">ราคาต่อหน่วย</th>
                                 <th className="py-2 px-4 text-center">จำนวน</th>
                                 <th className="py-2 px-4 text-right">ราคารวม</th>
