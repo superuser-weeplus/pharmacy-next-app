@@ -1,3 +1,10 @@
+interface ValidationRule {
+  required: () => ValidationRule
+  min: (value: number) => ValidationRule
+  max: (value: number) => ValidationRule
+  custom: (fn: (value: unknown) => boolean | string) => ValidationRule
+}
+
 const userSchema = {
     name: "user",
     title: "User",
@@ -7,13 +14,13 @@ const userSchema = {
         name: "name",
         title: "Name",
         type: "string",
-        validation: (Rule: { required: () => any }) => Rule.required(),
+        validation: (Rule: ValidationRule) => Rule.required(),
       },
       {
         name: "email",
         title: "Email",
         type: "string",
-        validation: (Rule: { required: () => any }) => Rule.required(),
+        validation: (Rule: ValidationRule) => Rule.required(),
       },
       {
         name: "emailVerified",
@@ -37,7 +44,7 @@ const userSchema = {
         options: {
           list: ['user', 'admin'],
         },
-        validation: (Rule: { required: () => any }) => Rule.required(),
+        validation: (Rule: ValidationRule) => Rule.required(),
       },
       {
         name: "status",

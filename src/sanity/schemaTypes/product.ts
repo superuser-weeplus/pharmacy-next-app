@@ -26,7 +26,7 @@ interface ValidationRule {
   required: () => ValidationRule
   min: (value: number) => ValidationRule
   max: (value: number) => ValidationRule
-  custom: (fn: (value: any) => boolean | string) => ValidationRule
+  custom: (fn: (value: unknown) => boolean | string) => ValidationRule
 }
 
 const productSchema = {

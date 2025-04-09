@@ -13,10 +13,10 @@ export default function Header() {
   const { getItemCount } = useCart()
   const [cartCount, setCartCount] = useState(0)
   const [isClient, setIsClient] = useState(false)
-  const pathname = usePathname()
+  //const pathname = usePathname()
   const { data: session } = useSession()
   const router = useRouter()
-  const isAdmin = session?.user?.role === "admin"
+  //const isAdmin = session?.user?.role === "admin"
 
   // ตรวจสอบว่าเป็น client-side หรือไม่
   useEffect(() => {

@@ -1,3 +1,10 @@
+interface ValidationRule {
+  required: () => ValidationRule
+  min: (value: number) => ValidationRule
+  max: (value: number) => ValidationRule
+  custom: (fn: (value: unknown) => boolean | string) => ValidationRule
+}
+
 const sessionSchema = {
     name: "session",
     title: "Session",
@@ -7,19 +14,19 @@ const sessionSchema = {
         name: "userId",
         title: "User ID",
         type: "string",
-        validation: (Rule: { required: () => any }) => Rule.required(),
+        validation: (Rule: ValidationRule) => Rule.required(),
       },
       {
         name: "sessionToken",
         title: "Session Token",
         type: "string",
-        validation: (Rule: { required: () => any }) => Rule.required(),
+        validation: (Rule: ValidationRule) => Rule.required(),
       },
       {
         name: "expires",
         title: "Expires",
         type: "datetime",
-        validation: (Rule: { required: () => any }) => Rule.required(),
+        validation: (Rule: ValidationRule) => Rule.required(),
       },
       {
         name: "createdAt",
