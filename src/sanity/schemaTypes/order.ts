@@ -23,6 +23,13 @@ interface Order {
   updatedAt: string
 }
 
+interface ValidationRule {
+  required: () => ValidationRule
+  min: (value: number) => ValidationRule
+  max: (value: number) => ValidationRule
+  custom: (fn: (value: any) => boolean | string) => ValidationRule
+}
+
 const orderSchema = {
   name: 'order',
   title: 'Order',
@@ -33,7 +40,7 @@ const orderSchema = {
       title: 'User',
       type: 'reference',
       to: [{ type: 'user' }],
-      validation: (Rule: { required: () => any }) => Rule.required(),
+      validation: (Rule: ValidationRule) => Rule.required(),
     },
     {
       name: 'items',
@@ -48,19 +55,19 @@ const orderSchema = {
               title: 'Product',
               type: 'reference',
               to: [{ type: 'product' }],
-              validation: (Rule: { required: () => any }) => Rule.required(),
+              validation: (Rule: ValidationRule) => Rule.required(),
             },
             {
               name: 'quantity',
               title: 'Quantity',
               type: 'number',
-              validation: (Rule: { required: () => any }) => Rule.required(),
+              validation: (Rule: ValidationRule) => Rule.required(),
             },
             {
               name: 'price',
               title: 'Price',
               type: 'number',
-              validation: (Rule: { required: () => any }) => Rule.required(),
+              validation: (Rule: ValidationRule) => Rule.required(),
             },
           ],
         },
@@ -70,7 +77,7 @@ const orderSchema = {
       name: 'total',
       title: 'Total',
       type: 'number',
-      validation: (Rule: { required: () => any }) => Rule.required(),
+      validation: (Rule: ValidationRule) => Rule.required(),
     },
     {
       name: 'status',
@@ -79,7 +86,7 @@ const orderSchema = {
       options: {
         list: ['pending', 'processing', 'completed', 'cancelled'],
       },
-      validation: (Rule: { required: () => any }) => Rule.required(),
+      validation: (Rule: ValidationRule) => Rule.required(),
     },
   ],
 }

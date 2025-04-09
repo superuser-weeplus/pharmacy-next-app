@@ -13,6 +13,13 @@ interface Category {
   }
 }
 
+interface ValidationRule {
+  required: () => ValidationRule
+  min: (value: number) => ValidationRule
+  max: (value: number) => ValidationRule
+  custom: (fn: (value: any) => boolean | string) => ValidationRule
+}
+
 const categorySchema = {
     name: "category",
     title: "Category",
@@ -22,7 +29,7 @@ const categorySchema = {
         name: "name",
         title: "Name",
         type: "string",
-        validation: (Rule: { required: () => any }) => Rule.required(),
+        validation: (Rule: ValidationRule) => Rule.required(),
       },
       {
         name: "slug",
@@ -32,7 +39,7 @@ const categorySchema = {
           source: "name",
           maxLength: 96,
         },
-        validation: (Rule: { required: () => any }) => Rule.required(),
+        validation: (Rule: ValidationRule) => Rule.required(),
       },
       {
         name: "description",

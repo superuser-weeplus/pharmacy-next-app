@@ -32,7 +32,7 @@ export function useAuth() {
   const { data: session, status } = useSession()
   const { platform, isLiff } = usePlatform()
 
-  const login = async (provider: string, credentials?: any) => {
+  const login = async (provider: string, credentials?: LoginCredentials) => {
     try {
       // ตรวจสอบว่าเป็น LINE Login บน LIFF หรือไม่
       if (provider === "line" && isLiff) {

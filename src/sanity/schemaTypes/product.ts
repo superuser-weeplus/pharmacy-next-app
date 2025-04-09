@@ -22,6 +22,13 @@ interface Product {
   updatedAt: string
 }
 
+interface ValidationRule {
+  required: () => ValidationRule
+  min: (value: number) => ValidationRule
+  max: (value: number) => ValidationRule
+  custom: (fn: (value: any) => boolean | string) => ValidationRule
+}
+
 const productSchema = {
   name: 'product',
   title: 'Product',
@@ -31,7 +38,7 @@ const productSchema = {
       name: 'name',
       title: 'Name',
       type: 'string',
-      validation: (Rule: { required: () => any }) => Rule.required(),
+      validation: (Rule: ValidationRule) => Rule.required(),
     },
     {
       name: 'slug',
@@ -41,7 +48,7 @@ const productSchema = {
         source: 'name',
         maxLength: 96,
       },
-      validation: (Rule: { required: () => any }) => Rule.required(),
+      validation: (Rule: ValidationRule) => Rule.required(),
     },
     {
       name: 'description',
@@ -52,7 +59,7 @@ const productSchema = {
       name: 'price',
       title: 'Price',
       type: 'number',
-      validation: (Rule: { required: () => any }) => Rule.required(),
+      validation: (Rule: ValidationRule) => Rule.required(),
     },
     {
       name: 'image',
@@ -72,7 +79,7 @@ const productSchema = {
       name: 'stock',
       title: 'Stock',
       type: 'number',
-      validation: (Rule: { required: () => any }) => Rule.required(),
+      validation: (Rule: ValidationRule) => Rule.required(),
     },
     {
       name: 'status',
@@ -81,7 +88,7 @@ const productSchema = {
       options: {
         list: ['active', 'inactive'],
       },
-      validation: (Rule: { required: () => any }) => Rule.required(),
+      validation: (Rule: ValidationRule) => Rule.required(),
     },
   ],
 }
