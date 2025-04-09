@@ -4,8 +4,31 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useEffect, useState } from "react"
 
+// เพิ่ม type definitions สำหรับ LIFF
+declare global {
+  interface Window {
+    liff: {
+      init: (config: { liffId: string }) => Promise<void>;
+      isLoggedIn: () => boolean;
+      getProfile: () => Promise<{
+        userId: string;
+        displayName: string;
+        pictureUrl?: string;
+        statusMessage?: string;
+      }>;
+    };
+  }
+}
+
+interface LineProfile {
+  userId: string;
+  displayName: string;
+  pictureUrl?: string;
+  statusMessage?: string;
+}
+
 export default function LiffPage() {
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<LineProfile | null>(null)
 
   useEffect(() => {
     // ตรวจสอบว่าเป็น LIFF หรือไม่
@@ -14,15 +37,15 @@ export default function LiffPage() {
         .then(() => {
           if (window.liff.isLoggedIn()) {
             window.liff.getProfile()
-              .then(profile => {
+              .then((profile: LineProfile) => {
                 setProfile(profile)
               })
-              .catch(err => {
+              .catch((err: Error) => {
                 console.error('Error getting profile:', err)
               })
           }
         })
-        .catch(err => {
+        .catch((err: Error) => {
           console.error('Error initializing LIFF:', err)
         })
     }
@@ -40,11 +63,13 @@ export default function LiffPage() {
             {profile ? (
               <>
                 <p>สวัสดี {profile.displayName}</p>
-                <img 
-                  src={profile.pictureUrl} 
-                  alt="Profile" 
-                  className="w-20 h-20 rounded-full"
-                />
+                {profile.pictureUrl && (
+                  <img 
+                    src={profile.pictureUrl} 
+                    alt="Profile" 
+                    className="w-20 h-20 rounded-full"
+                  />
+                )}
               </>
             ) : (
               <p>กรุณาเข้าสู่ระบบผ่าน LINE</p>
