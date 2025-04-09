@@ -6,29 +6,20 @@ import { Input } from "@/components/ui/input"
 import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/contexts/cart-context"
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 
 export default function Header() {
+  const { data: session } = useSession()
+  const router = useRouter()
   const { getItemCount } = useCart()
   const [cartCount, setCartCount] = useState(0)
   const [isClient, setIsClient] = useState(false)
-  //const pathname = usePathname()
-  const { data: session } = useSession()
-  const router = useRouter()
-  //const isAdmin = session?.user?.role === "admin"
 
-  // ตรวจสอบว่าเป็น client-side หรือไม่
   useEffect(() => {
     setIsClient(true)
-  }, [])
-
-  // อัปเดตจำนวนสินค้าในตะกร้าเมื่อมีการเปลี่ยนแปลง
-  useEffect(() => {
-    if (isClient) {
-      setCartCount(getItemCount())
-    }
-  }, [getItemCount, isClient])
+    setCartCount(getItemCount())
+  }, [getItemCount])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -140,8 +131,6 @@ export default function Header() {
                 </Link>
               </li>
             </ul>
-
-            {/* ลบเงื่อนไขการตรวจสอบ admin ออก เพราะเราต้องการให้ปุ่มแสดงตลอดเวลา */}
           </div>
         </div>
       </nav>

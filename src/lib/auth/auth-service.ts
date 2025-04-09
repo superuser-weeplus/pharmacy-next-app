@@ -28,26 +28,29 @@ interface RegisterCredentials {
   password: string
 }
 
+interface LiffProfile {
+  userId: string
+  displayName: string
+  pictureUrl?: string
+  statusMessage?: string
+}
+
 export function useAuth() {
   const { data: session, status } = useSession()
-  const { platform, isLiff } = usePlatform()
+  const { isLiff } = usePlatform()
 
   const login = async (provider: string, credentials?: LoginCredentials) => {
     try {
-      // ตรวจสอบว่าเป็น LINE Login บน LIFF หรือไม่
       if (provider === "line" && isLiff) {
-        // ใช้ LIFF SDK สำหรับ LINE Login
-        if (typeof window !== "undefined" && (window as any).liff) {
-          const liff = (window as any).liff
+        if (typeof window !== "undefined" && window.liff) {
+          const liff = window.liff
           if (!liff.isLoggedIn()) {
             await liff.login()
           }
 
-          // ดึงข้อมูล profile และ token จาก LIFF
           const profile = await liff.getProfile()
           const token = liff.getAccessToken()
 
-          // ส่งข้อมูลไปยัง API เพื่อสร้าง session
           const response = await fetch("/api/auth/liff-login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -58,7 +61,6 @@ export function useAuth() {
         }
       }
 
-      // ใช้ NextAuth สำหรับการ login ปกติ
       return await signIn(provider, {
         ...credentials,
         redirect: false,
@@ -71,15 +73,13 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      // ตรวจสอบว่าเป็น LIFF หรือไม่
-      if (isLiff && typeof window !== "undefined" && (window as any).liff) {
-        const liff = (window as any).liff
+      if (isLiff && typeof window !== "undefined" && window.liff) {
+        const liff = window.liff
         if (liff.isLoggedIn()) {
           liff.logout()
         }
       }
 
-      // ใช้ NextAuth สำหรับการ logout ปกติ
       return await signOut({ redirect: false })
     } catch (error) {
       console.error("Logout error:", error)

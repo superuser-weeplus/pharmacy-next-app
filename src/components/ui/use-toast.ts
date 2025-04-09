@@ -31,7 +31,7 @@ type ActionType = {
   REMOVE_TOAST: "REMOVE_TOAST"
 }
 
-const actionTypes: ActionType = {
+const ACTION_TYPES: ActionType = {
   ADD_TOAST: "ADD_TOAST",
   UPDATE_TOAST: "UPDATE_TOAST",
   DISMISS_TOAST: "DISMISS_TOAST",
@@ -45,23 +45,12 @@ function genId() {
   return count.toString()
 }
 
-type Action =
-  | {
-      type: ActionType["ADD_TOAST"]
-      toast: ToasterToast
-    }
-  | {
-      type: ActionType["UPDATE_TOAST"]
-      toast: Partial<ToasterToast>
-    }
-  | {
-      type: ActionType["DISMISS_TOAST"]
-      toastId?: string
-    }
-  | {
-      type: ActionType["REMOVE_TOAST"]
-      toastId?: string
-    }
+type Action = {
+  type: keyof ActionType
+  toast: ToasterToast
+  toastId?: string
+  dismissAll?: boolean
+}
 
 interface State {
   toasts: ToasterToast[]
