@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { createContext, useContext, useEffect, useState } from "react"
+import React, { createContext, useContext, useEffect, useState } from "react"
 
 type Platform = "web" | "liff" | "unknown"
 
@@ -46,7 +44,7 @@ export function PlatformProvider({ children }: { children: React.ReactNode }) {
     isUnknown: platform === "unknown",
   }
 
-  return <PlatformContext.Provider value={value}>{children}</PlatformContext.Provider>
+  return React.createElement(PlatformContext.Provider, { value }, children)
 }
 
 export function usePlatform() {
