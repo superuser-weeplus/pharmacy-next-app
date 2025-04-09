@@ -6,15 +6,16 @@ import { Input } from "@/components/ui/input"
 import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/contexts/cart-context"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 
-export function Header() {
+export default function Header() {
   const { getItemCount } = useCart()
   const [cartCount, setCartCount] = useState(0)
   const [isClient, setIsClient] = useState(false)
   const pathname = usePathname()
   const { data: session } = useSession()
+  const router = useRouter()
   const isAdmin = session?.user?.role === "admin"
 
   // ตรวจสอบว่าเป็น client-side หรือไม่
@@ -30,7 +31,7 @@ export function Header() {
   }, [getItemCount, isClient])
 
   return (
-    <header className="w-full">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">

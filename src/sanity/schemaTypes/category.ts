@@ -1,3 +1,18 @@
+interface Category {
+  _id: string
+  _type: string
+  name: string
+  slug: string
+  description?: string
+  image?: {
+    _type: string
+    asset: {
+      _ref: string
+      _type: string
+    }
+  }
+}
+
 const categorySchema = {
     name: "category",
     title: "Category",
@@ -23,6 +38,14 @@ const categorySchema = {
         name: "description",
         title: "Description",
         type: "text",
+      },
+      {
+        name: "image",
+        title: "Image",
+        type: "image",
+        options: {
+          hotspot: true,
+        },
       },
       {
         name: "parent",

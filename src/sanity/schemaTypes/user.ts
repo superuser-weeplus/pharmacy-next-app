@@ -1,4 +1,4 @@
-export default {
+const userSchema = {
     name: "user",
     title: "User",
     type: "document",
@@ -7,11 +7,13 @@ export default {
         name: "name",
         title: "Name",
         type: "string",
+        validation: (Rule: { required: () => any }) => Rule.required(),
       },
       {
         name: "email",
         title: "Email",
         type: "string",
+        validation: (Rule: { required: () => any }) => Rule.required(),
       },
       {
         name: "emailVerified",
@@ -21,7 +23,7 @@ export default {
       {
         name: "image",
         title: "Image",
-        type: "url",
+        type: "string",
       },
       {
         name: "passwordHash",
@@ -33,13 +35,9 @@ export default {
         title: "Role",
         type: "string",
         options: {
-          list: [
-            { title: "Admin", value: "admin" },
-            { title: "Staff", value: "staff" },
-            { title: "Customer", value: "customer" },
-          ],
+          list: ['user', 'admin'],
         },
-        initialValue: "customer",
+        validation: (Rule: { required: () => any }) => Rule.required(),
       },
       {
         name: "status",
@@ -76,4 +74,6 @@ export default {
       },
     ],
   }
+  
+export default userSchema
   

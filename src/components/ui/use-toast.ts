@@ -3,27 +3,25 @@
 import * as React from "react"
 
 // กำหนด interface สำหรับ Toast
+type ToastActionElement = React.ReactElement<{
+  onClick: () => void
+}>
+
 interface ToastProps {
+  id: string
   title?: string
   description?: string
   action?: ToastActionElement
-  variant?: 'default' | 'destructive'
-  duration?: number
-}
-
-interface ToastActionElement extends React.ReactElement {
-  props: {
-    onClick: () => void
-  }
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
 
 type ToasterToast = ToastProps & {
-  id: string
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
+  variant?: 'default' | 'destructive'
+  duration?: number
 }
 
 const actionTypes = {

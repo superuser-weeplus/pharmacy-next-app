@@ -1,4 +1,4 @@
-export default {
+const sessionSchema = {
     name: "session",
     title: "Session",
     type: "document",
@@ -7,16 +7,19 @@ export default {
         name: "userId",
         title: "User ID",
         type: "string",
+        validation: (Rule: { required: () => any }) => Rule.required(),
       },
       {
         name: "sessionToken",
         title: "Session Token",
         type: "string",
+        validation: (Rule: { required: () => any }) => Rule.required(),
       },
       {
         name: "expires",
         title: "Expires",
         type: "datetime",
+        validation: (Rule: { required: () => any }) => Rule.required(),
       },
       {
         name: "createdAt",
@@ -30,4 +33,6 @@ export default {
       },
     ],
   }
+
+export default sessionSchema
   

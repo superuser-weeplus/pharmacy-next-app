@@ -62,3 +62,17 @@ export function getPlatform(userAgent: string): 'line' | 'mobile' | 'desktop' {
   if (isMobileBrowser(userAgent)) return 'mobile'
   return 'desktop'
 }
+
+export function isLineApp(): boolean {
+  if (typeof window === 'undefined') return false
+  
+  const userAgent = window.navigator.userAgent.toLowerCase()
+  const lineInfo = window.navigator.userAgent.match(/Line\/(\d+\.\d+)/)
+  
+  return userAgent.includes('line') && lineInfo !== null
+}
+
+export function getPlatform(): 'web' | 'line' {
+  if (typeof window === 'undefined') return 'web'
+  return isLineApp() ? 'line' : 'web'
+}

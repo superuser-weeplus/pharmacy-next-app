@@ -98,14 +98,14 @@ export function useAuth() {
   }
 }
 
-export async function login(credentials: LoginCredentials): Promise<AuthResponse> {
+export async function login(email: string, password: string): Promise<AuthResponse> {
   try {
     const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({ email, password }),
     })
 
     const data = await response.json()

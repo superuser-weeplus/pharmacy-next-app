@@ -1,107 +1,88 @@
-export default {
-    name: "order",
-    title: "Order",
-    type: "document",
-    fields: [
-      {
-        name: "orderNumber",
-        title: "Order Number",
-        type: "string",
-        validation: (Rule: any) => Rule.required(),
-      },
-      {
-        name: "user",
-        title: "User",
-        type: "reference",
-        to: [{ type: "user" }],
-      },
-      {
-        name: "items",
-        title: "Items",
-        type: "array",
-        of: [
-          {
-            type: "object",
-            fields: [
-              {
-                name: "product",
-                title: "Product",
-                type: "reference",
-                to: [{ type: "product" }],
-                validation: (Rule: any) => Rule.required(),
-              },
-              {
-                name: "quantity",
-                title: "Quantity",
-                type: "number",
-                validation: (Rule: any) => Rule.required().min(1),
-              },
-              {
-                name: "price",
-                title: "Price at Order Time",
-                type: "number",
-                validation: (Rule: any) => Rule.required().positive(),
-              },
-            ],
-          },
-        ],
-      },
-      {
-        name: "totalAmount",
-        title: "Total Amount",
-        type: "number",
-        validation: (Rule: any) => Rule.required().positive(),
-      },
-      {
-        name: "status",
-        title: "Status",
-        type: "string",
-        options: {
-          list: [
-            { title: "Pending", value: "pending" },
-            { title: "Processing", value: "processing" },
-            { title: "Shipped", value: "shipped" },
-            { title: "Delivered", value: "delivered" },
-            { title: "Cancelled", value: "cancelled" },
+interface OrderItem {
+  _key: string
+  _type: string
+  product: {
+    _ref: string
+    _type: string
+  }
+  quantity: number
+  price: number
+}
+
+interface Order {
+  _id: string
+  _type: string
+  user: {
+    _ref: string
+    _type: string
+  }
+  items: OrderItem[]
+  total: number
+  status: 'pending' | 'processing' | 'completed' | 'cancelled'
+  createdAt: string
+  updatedAt: string
+}
+
+const orderSchema = {
+  name: 'order',
+  title: 'Order',
+  type: 'document',
+  fields: [
+    {
+      name: 'user',
+      title: 'User',
+      type: 'reference',
+      to: [{ type: 'user' }],
+      validation: (Rule: { required: () => any }) => Rule.required(),
+    },
+    {
+      name: 'items',
+      title: 'Items',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'product',
+              title: 'Product',
+              type: 'reference',
+              to: [{ type: 'product' }],
+              validation: (Rule: { required: () => any }) => Rule.required(),
+            },
+            {
+              name: 'quantity',
+              title: 'Quantity',
+              type: 'number',
+              validation: (Rule: { required: () => any }) => Rule.required(),
+            },
+            {
+              name: 'price',
+              title: 'Price',
+              type: 'number',
+              validation: (Rule: { required: () => any }) => Rule.required(),
+            },
           ],
         },
-        initialValue: "pending",
+      ],
+    },
+    {
+      name: 'total',
+      title: 'Total',
+      type: 'number',
+      validation: (Rule: { required: () => any }) => Rule.required(),
+    },
+    {
+      name: 'status',
+      title: 'Status',
+      type: 'string',
+      options: {
+        list: ['pending', 'processing', 'completed', 'cancelled'],
       },
-      {
-        name: "shippingAddress",
-        title: "Shipping Address",
-        type: "object",
-        fields: [
-          { name: "name", title: "Name", type: "string" },
-          { name: "address", title: "Address", type: "string" },
-          { name: "city", title: "City", type: "string" },
-          { name: "postalCode", title: "Postal Code", type: "string" },
-          { name: "country", title: "Country", type: "string" },
-          { name: "phone", title: "Phone", type: "string" },
-        ],
-      },
-      {
-        name: "paymentInfo",
-        title: "Payment Information",
-        type: "object",
-        fields: [
-          { name: "method", title: "Method", type: "string" },
-          { name: "transactionId", title: "Transaction ID", type: "string" },
-          { name: "status", title: "Status", type: "string" },
-        ],
-      },
-      {
-        name: "createdAt",
-        title: "Created At",
-        type: "datetime",
-        initialValue: () => new Date().toISOString(),
-      },
-      {
-        name: "updatedAt",
-        title: "Updated At",
-        type: "datetime",
-        initialValue: () => new Date().toISOString(),
-      },
-    ],
-  }
+      validation: (Rule: { required: () => any }) => Rule.required(),
+    },
+  ],
+}
+
+export default orderSchema
   
