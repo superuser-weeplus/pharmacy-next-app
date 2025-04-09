@@ -5,48 +5,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Image from "next/image"
 import { useEffect, useState } from "react"
 
-// เพิ่ม type definitions สำหรับ LIFF
-declare global {
-  interface Window {
-    liff: {
-      init: (config: { liffId: string }) => Promise<void>;
-      isLoggedIn: () => boolean;
-      getProfile: () => Promise<{
-        userId: string;
-        displayName: string;
-        pictureUrl?: string;
-        statusMessage?: string;
-      }>;
-    };
-  }
-}
-
 interface LineProfile {
-  userId: string;
-  displayName: string;
-  pictureUrl?: string;
-  statusMessage?: string;
+  userId: string
+  displayName: string
+  pictureUrl?: string
+  statusMessage?: string
 }
 
 export default function LiffPage() {
   const [profile, setProfile] = useState<LineProfile | null>(null)
 
   useEffect(() => {
-    // ตรวจสอบว่าเป็น LIFF หรือไม่
     if (typeof window !== 'undefined' && window.liff) {
-      window.liff.init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID || '' })
+      const liff = window.liff
+      liff.init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID || '' })
         .then(() => {
-          if (window.liff.isLoggedIn()) {
-            window.liff.getProfile()
-              .then((profile: LineProfile) => {
+          if (liff.isLoggedIn()) {
+            liff.getProfile()
+              .then((profile) => {
                 setProfile(profile)
               })
-              .catch((err: Error) => {
+              .catch((err) => {
                 console.error('Error getting profile:', err)
               })
           }
         })
-        .catch((err: Error) => {
+        .catch((err) => {
           console.error('Error initializing LIFF:', err)
         })
     }

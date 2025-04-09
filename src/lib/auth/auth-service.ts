@@ -2,6 +2,7 @@
 
 import { signIn, signOut, useSession } from "next-auth/react"
 import { usePlatform } from "@/components/platform-detector"
+import { Liff } from "@line/liff"
 
 interface AuthResponse {
   success: boolean
@@ -33,6 +34,12 @@ interface LiffProfile {
   displayName: string
   pictureUrl?: string
   statusMessage?: string
+}
+
+declare global {
+  interface Window {
+    liff?: Liff
+  }
 }
 
 export function useAuth() {

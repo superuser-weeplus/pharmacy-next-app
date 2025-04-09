@@ -11,6 +11,7 @@
     "delete-test-users": "tsx scripts/delete-test-users.ts"
   },
   "dependencies": {
+    "@line/liff": "^2.25.1",
     "@radix-ui/react-select": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.0",
     "@radix-ui/react-tabs": "^1.1.4",
