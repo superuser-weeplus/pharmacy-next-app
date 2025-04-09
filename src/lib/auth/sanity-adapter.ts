@@ -1,4 +1,4 @@
-import type { Adapter } from "next-auth/adapters"
+import type { Adapter, AdapterSession, AdapterUser } from "next-auth/adapters"
 import type { SanityClient } from "next-sanity"
 import { v4 as uuidv4 } from "uuid"
 
@@ -9,6 +9,7 @@ interface SanityUser {
   email: string
   image?: string
   role: string
+  emailVerified?: Date | null
 }
 
 interface SanitySession {
@@ -20,6 +21,7 @@ interface SanitySession {
 }
 
 interface Account {
+  userId: string
   provider: string
   type: string
   providerAccountId: string
@@ -34,7 +36,7 @@ interface Account {
 
 export function SanityAdapter(client: SanityClient): Adapter {
   return {
-    async createUser(user: SanityUser) {
+    async createUser(user: Omit<AdapterUser, "id">) {
       const newUser = {
         _id: `user.${uuidv4()}`,
         _type: "user",
@@ -72,7 +74,7 @@ export function SanityAdapter(client: SanityClient): Adapter {
       }
     },
 
-    async getUserByEmail(email: string): Promise<SanityUser | null> {
+    async getUserByEmail(email: string) {
       const user = await client.fetch(`*[_type == "user" && email == $email][0]`, { email })
       if (!user) return null
 
@@ -140,4 +142,116 @@ export function SanityAdapter(client: SanityClient): Adapter {
 
     async linkAccount(account: Account) {
       const newAccount = {
-        _id: `
+        _id: `account.${uuidv4()}`,
+        _type: "account",
+        userId: account.userId,
+        type: account.type,
+        provider: account.provider,
+        providerAccountId: account.providerAccountId,
+        refresh_token: account.refresh_token,
+        access_token: account.access_token,
+        expires_at: account.expires_at,
+        token_type: account.token_type,
+        scope: account.scope,
+        id_token: account.id_token,
+        session_state: account.session_state,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+
+      await client.create(newAccount)
+    },
+
+    async unlinkAccount({ providerAccountId, provider }: { providerAccountId: string; provider: string }) {
+      await client.delete({
+        query: `*[_type == "account" && provider == $provider && providerAccountId == $providerAccountId][0]`,
+        params: { provider, providerAccountId }
+      })
+    },
+
+    async createSession(session: { sessionToken: string; userId: string; expires: Date }) {
+      const newSession = {
+        _id: `session.${uuidv4()}`,
+        _type: "session",
+        userId: session.userId,
+        expires: session.expires.toISOString(),
+        sessionToken: session.sessionToken,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+
+      const result = await client.create(newSession)
+      return {
+        id: result._id,
+        userId: result.userId,
+        expires: new Date(result.expires),
+        sessionToken: result.sessionToken,
+      }
+    },
+
+    async getSessionAndUser(sessionToken) {
+      const result = await client.fetch(
+        `*[_type == "session" && sessionToken == $sessionToken && expires > now()][0]{
+          _id,
+          userId,
+          expires,
+          sessionToken,
+          "user": *[_type == "user" && _id == ^.userId][0]{
+            _id,
+            name,
+            email,
+            emailVerified,
+            image,
+            role
+          }
+        }`,
+        { sessionToken },
+      )
+
+      if (!result?.user) return null
+
+      return {
+        session: {
+          id: result._id,
+          userId: result.userId,
+          expires: new Date(result.expires),
+          sessionToken: result.sessionToken,
+        },
+        user: {
+          id: result.user._id,
+          name: result.user.name,
+          email: result.user.email,
+          emailVerified: result.user.emailVerified ? new Date(result.user.emailVerified) : null,
+          image: result.user.image,
+          role: result.user.role || "customer",
+        },
+      }
+    },
+
+    async updateSession(session: Partial<AdapterSession> & Pick<AdapterSession, "sessionToken">) {
+      const updatedSession = {
+        expires: session.expires ? new Date(session.expires).toISOString() : new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+
+      const result = await client
+        .patch(`*[_type == "session" && sessionToken == $sessionToken][0]._id`)
+        .set(updatedSession)
+        .commit()
+
+      return {
+        id: result._id,
+        userId: result.userId,
+        expires: new Date(result.expires),
+        sessionToken: result.sessionToken,
+      }
+    },
+
+    async deleteSession(sessionToken) {
+      await client.delete({ 
+        query: `*[_type == "session" && sessionToken == $sessionToken][0]`,
+        params: { sessionToken }
+      })
+    },
+  }
+}
