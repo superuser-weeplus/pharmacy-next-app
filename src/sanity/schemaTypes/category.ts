@@ -1,4 +1,4 @@
-export default {
+const categorySchema = {
     name: "category",
     title: "Category",
     type: "document",
@@ -7,7 +7,7 @@ export default {
         name: "name",
         title: "Name",
         type: "string",
-        validation: (Rule: any) => Rule.required(),
+        validation: (Rule: { required: () => any }) => Rule.required(),
       },
       {
         name: "slug",
@@ -17,7 +17,7 @@ export default {
           source: "name",
           maxLength: 96,
         },
-        validation: (Rule: any) => Rule.required(),
+        validation: (Rule: { required: () => any }) => Rule.required(),
       },
       {
         name: "description",
@@ -37,4 +37,6 @@ export default {
       },
     ],
   }
+
+export default categorySchema
   

@@ -19,6 +19,19 @@ interface SanitySession {
   expires: string
 }
 
+interface Account {
+  provider: string
+  type: string
+  providerAccountId: string
+  refresh_token?: string
+  access_token?: string
+  expires_at?: number
+  token_type?: string
+  scope?: string
+  id_token?: string
+  session_state?: string
+}
+
 export function SanityAdapter(client: SanityClient): Adapter {
   return {
     async createUser(user: SanityUser) {
@@ -125,118 +138,6 @@ export function SanityAdapter(client: SanityClient): Adapter {
       await client.delete(userId)
     },
 
-    async linkAccount(account: any) {
+    async linkAccount(account: Account) {
       const newAccount = {
-        _id: `account.${uuidv4()}`,
-        _type: "account",
-        userId: account.userId,
-        type: account.type,
-        provider: account.provider,
-        providerAccountId: account.providerAccountId,
-        refresh_token: account.refresh_token,
-        access_token: account.access_token,
-        expires_at: account.expires_at,
-        token_type: account.token_type,
-        scope: account.scope,
-        id_token: account.id_token,
-        session_state: account.session_state,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }
-
-      await client.create(newAccount)
-    },
-
-    async unlinkAccount({ providerAccountId, provider }: { providerAccountId: string; provider: string }) {
-      await client.delete({
-        query: `*[_type == "account" && provider == $provider && providerAccountId == $providerAccountId][0]`,
-        params: { provider, providerAccountId }
-      })
-    },
-
-    async createSession(session: SanitySession): Promise<SanitySession> {
-      const newSession = {
-        _id: `session.${uuidv4()}`,
-        _type: "session",
-        userId: session.userId,
-        expires: new Date(session.expires).toISOString(),
-        sessionToken: session.sessionToken,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }
-
-      const result = await client.create(newSession)
-      return {
-        id: result._id,
-        userId: result.userId,
-        expires: new Date(result.expires),
-        sessionToken: result.sessionToken,
-      }
-    },
-
-    async getSessionAndUser(sessionToken) {
-      const result = await client.fetch(
-        `*[_type == "session" && sessionToken == $sessionToken && expires > now()][0]{
-          _id,
-          userId,
-          expires,
-          sessionToken,
-          "user": *[_type == "user" && _id == ^.userId][0]{
-            _id,
-            name,
-            email,
-            emailVerified,
-            image,
-            role
-          }
-        }`,
-        { sessionToken },
-      )
-
-      if (!result?.user) return null
-
-      return {
-        session: {
-          id: result._id,
-          userId: result.userId,
-          expires: new Date(result.expires),
-          sessionToken: result.sessionToken,
-        },
-        user: {
-          id: result.user._id,
-          name: result.user.name,
-          email: result.user.email,
-          emailVerified: result.user.emailVerified ? new Date(result.user.emailVerified) : null,
-          image: result.user.image,
-          role: result.user.role || "customer",
-        },
-      }
-    },
-
-    async updateSession(session) {
-      const updatedSession = {
-        expires: session.expires ? new Date(session.expires).toISOString() : new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }
-
-      const result = await client
-        .patch(`*[_type == "session" && sessionToken == $sessionToken][0]._id`)
-        .set(updatedSession)
-        .commit()
-
-      return {
-        id: result._id,
-        userId: result.userId,
-        expires: new Date(result.expires),
-        sessionToken: result.sessionToken,
-      }
-    },
-
-    async deleteSession(sessionToken) {
-      await client.delete({ 
-        query: `*[_type == "session" && sessionToken == $sessionToken][0]`,
-        params: { sessionToken }
-      })
-    },
-  }
-}
+        _id: `

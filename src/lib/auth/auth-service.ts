@@ -17,6 +17,17 @@ interface AuthResponse {
   }
 }
 
+interface LoginCredentials {
+  email: string
+  password: string
+}
+
+interface RegisterCredentials {
+  name: string
+  email: string
+  password: string
+}
+
 export function useAuth() {
   const { data: session, status } = useSession()
   const { platform, isLiff } = usePlatform()
@@ -87,14 +98,14 @@ export function useAuth() {
   }
 }
 
-export async function login(email: string, password: string): Promise<AuthResponse> {
+export async function login(credentials: LoginCredentials): Promise<AuthResponse> {
   try {
     const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(credentials),
     })
 
     const data = await response.json()
@@ -104,6 +115,27 @@ export async function login(email: string, password: string): Promise<AuthRespon
     return {
       success: false,
       message: 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ',
+    }
+  }
+}
+
+export async function register(credentials: RegisterCredentials): Promise<AuthResponse> {
+  try {
+    const response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    })
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('Register error:', error)
+    return {
+      success: false,
+      message: 'เกิดข้อผิดพลาดในการสมัครสมาชิก',
     }
   }
 }

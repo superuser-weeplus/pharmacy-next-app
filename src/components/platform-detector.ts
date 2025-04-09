@@ -2,24 +2,22 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react"
 
-type Platform = "web" | "liff" | "unknown"
-
-type PlatformContextType = {
-  platform: Platform
+interface PlatformContextType {
+  platform: 'web' | 'liff' | 'mobile'
   isLiff: boolean
   isWeb: boolean
-  isUnknown: boolean
+  isMobile: boolean
 }
 
 const PlatformContext = createContext<PlatformContextType>({
-  platform: "unknown",
+  platform: 'web',
   isLiff: false,
-  isWeb: false,
-  isUnknown: true,
+  isWeb: true,
+  isMobile: false,
 })
 
 export function PlatformProvider({ children }: { children: React.ReactNode }) {
-  const [platform, setPlatform] = useState<Platform>("unknown")
+  const [platform, setPlatform] = useState<PlatformContextType['platform']>('web')
 
   useEffect(() => {
     // ตรวจสอบว่าเป็น client-side หรือไม่
@@ -41,7 +39,7 @@ export function PlatformProvider({ children }: { children: React.ReactNode }) {
     platform,
     isLiff: platform === "liff",
     isWeb: platform === "web",
-    isUnknown: platform === "unknown",
+    isMobile: platform === "mobile",
   }
 
   return React.createElement(PlatformContext.Provider, { value }, children)

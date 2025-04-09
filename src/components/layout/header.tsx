@@ -14,7 +14,7 @@ export function Header() {
   const [cartCount, setCartCount] = useState(0)
   const [isClient, setIsClient] = useState(false)
   const pathname = usePathname()
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const isAdmin = session?.user?.role === "admin"
 
   // ตรวจสอบว่าเป็น client-side หรือไม่

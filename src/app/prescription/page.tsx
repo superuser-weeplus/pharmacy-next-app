@@ -116,7 +116,7 @@ export default function PrescriptionPage() {
   const { toast } = useToast()
   const [searchTerm, setSearchTerm] = useState("")
   const [filterByATC, setFilterByATC] = useState("")
-  const [medicines, setMedicines] = useState<IMedicine[]>(SAMPLE_MEDICINES)
+  const [medicines] = useState<IMedicine[]>(SAMPLE_MEDICINES)
   const [filteredMedicines, setFilteredMedicines] = useState<IMedicine[]>(SAMPLE_MEDICINES)
   const [cart, setCart] = useState<ICartItem[]>([])
   const [selectedTab, setSelectedTab] = useState("search")
