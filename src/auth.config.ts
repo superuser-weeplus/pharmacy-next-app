@@ -1,4 +1,4 @@
-import { type AuthConfig } from "next-auth"
+import { type NextAuthConfig } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import LineProvider from "next-auth/providers/line"
 import { SanityAdapter } from "@/lib/auth/sanity-adapter"
@@ -145,18 +145,6 @@ export const authConfig = {
 
       return true
     },
-    authorized({ auth, request }) {
-      const isLoggedIn = !!auth?.user
-      const { nextUrl } = request
-      const isOnDashboard = nextUrl.pathname.startsWith("/dashboard")
-      
-      if (isOnDashboard) {
-        if (isLoggedIn) return true
-        return false // Redirect unauthenticated users to login page
-      }
-      
-      return true
-    },
   },
   pages: {
     signIn: "/auth/signin",
@@ -164,4 +152,20 @@ export const authConfig = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: false,
-} satisfies AuthConfig 
+  /**
+   * ใน Next-Auth v5 ฟังก์ชัน authorized ถูกย้ายออกมาจาก callbacks
+   * และใช้สำหรับการควบคุมการเข้าถึงโดยเฉพาะ
+   */
+  authorized({ auth, request }) {
+    const isLoggedIn = !!auth?.user
+    const { nextUrl } = request
+    const isOnDashboard = nextUrl.pathname.startsWith("/dashboard")
+    
+    if (isOnDashboard) {
+      if (isLoggedIn) return true
+      return false // Redirect unauthenticated users to login page
+    }
+    
+    return true
+  },
+} satisfies NextAuthConfig

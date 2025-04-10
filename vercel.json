@@ -1,0 +1,81 @@
+{
+  "version": 2,
+  "buildCommand": "next build",
+  "framework": "nextjs",
+  "functions": {
+    "src/app/api/auth/**/*.ts": {
+      "runtime": "nodejs18",
+      "memory": 1024
+    },
+    "src/app/admin/**/*.ts": {
+      "runtime": "nodejs18",
+      "memory": 1024
+    },
+    "src/app/(auth)/**/*.ts": {
+      "runtime": "nodejs18"
+    },
+    "src/app/api/register/route.ts": {
+      "runtime": "nodejs18"
+    },
+    "src/app/api/*/route.ts": {
+      "runtime": "edge",
+      "experimental-edge-function": true
+    },
+    "src/app/products/**/*.ts": {
+      "runtime": "edge",
+      "experimental-edge-function": true
+    },
+    "src/app/web/**/*.ts": {
+      "runtime": "edge",
+      "experimental-edge-function": true
+    },
+    "src/app/liff/**/*.ts": {
+      "runtime": "edge",
+      "experimental-edge-function": true
+    },
+    "src/app/page.tsx": {
+      "runtime": "edge",
+      "experimental-edge-function": true
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://pharmacy-next-app.vercel.app" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
+      ]
+    }
+  ],
+  "env": {
+    "NEXTAUTH_URL": "https://pharmacy-next-app.vercel.app",
+    "VERCEL_EDGE_FUNCTIONS": "1"
+  },
+  "regions": ["sin1", "hnd1"],
+  "images": {
+    "sizes": [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200],
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "cdn.sanity.io"
+      }
+    ],
+    "minimumCacheTTL": 60
+  },
+  "crons": [
+    {
+      "path": "/api/cron/cleanup",
+      "schedule": "0 0 * * *"
+    }
+  ]
+} 

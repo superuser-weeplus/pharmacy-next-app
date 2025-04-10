@@ -9,8 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Search, ShoppingCart, ChevronRight, Plus, Minus, Check } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/components/ui/use-toast"
-import { Header } from "@/components/layout/header"
+import { toast } from "sonner"
+import Header from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 
 // นิยามประเภทข้อมูลยา
@@ -113,7 +113,6 @@ const ATC_CATEGORIES = [
 export default function PrescriptionPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const { toast } = useToast()
   const [searchTerm, setSearchTerm] = useState("")
   const [filterByATC, setFilterByATC] = useState("")
   const [medicines] = useState<IMedicine[]>(SAMPLE_MEDICINES)
@@ -168,8 +167,7 @@ export default function PrescriptionPage() {
       }
     })
 
-    toast({
-      title: "เพิ่มยาในใบสั่งแล้ว",
+    toast.success("เพิ่มยาในใบสั่งแล้ว", {
       description: `${medicine.genericName} ถูกเพิ่มในใบสั่งยาแล้ว`,
       duration: 3000,
     })
@@ -212,8 +210,7 @@ export default function PrescriptionPage() {
     setCart([])
     setSelectedTab("confirm") // ไปที่แท็บยืนยัน
 
-    toast({
-      title: "ส่งคำสั่งซื้อสำเร็จ",
+    toast.success("ส่งคำสั่งซื้อสำเร็จ", {
       description: "ใบสั่งยาของคุณถูกส่งเรียบร้อยแล้ว",
       duration: 3000,
     })

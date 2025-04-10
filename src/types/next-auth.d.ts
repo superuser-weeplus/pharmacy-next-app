@@ -1,18 +1,29 @@
-import type { DefaultSession } from "next-auth"
+import "next-auth"
 
 declare module "next-auth" {
-  /**
-   * เพิ่ม property ให้กับ User ใน session
-   */
-  interface Session {
-    user: {
-      id: string
-      role: string
-    } & DefaultSession["user"]
-  }
-
   interface User {
     id: string
     role: string
+  }
+  
+  interface Session {
+    user: {
+      id: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
+      role: string
+    }
+    provider?: string
+    accessToken?: string
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    userId: string
+    role: string
+    provider?: string
+    accessToken?: string
   }
 }
