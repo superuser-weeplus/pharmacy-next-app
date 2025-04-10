@@ -2,28 +2,27 @@ import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
 export default async function HomePage() {
+  // ตรวจสอบ user agent แบบปลอดภัยไม่ให้เกิด error
+  let destination = "/web" // ค่าเริ่มต้นเป็นเว็บเวอร์ชันปกติ
+  
   try {
     const headersList = await headers()
     const userAgent = headersList.get("user-agent") || ""
     
-    // ตรวจสอบว่าเป็น LINE หรือไม่ด้วยการค้นหาคำที่เกี่ยวข้อง
-    // ใช้ toLowerCase() เพื่อให้สามารถจับได้ทั้งตัวพิมพ์เล็กและใหญ่
+    // ตรวจสอบว่าเป็น LINE หรือไม่
     const isLineApp = 
       userAgent.toLowerCase().includes("line") || 
       userAgent.toLowerCase().includes("liff")
     
-    // ทำการ redirect ไปยังหน้าที่เหมาะสม
+    // กำหนดปลายทางตามประเภทของอุปกรณ์
     if (isLineApp) {
-      redirect("/liff")
-    } else {
-      redirect("/web")
+      destination = "/liff"
     }
   } catch (error) {
     console.error("Error in user agent detection:", error)
-    // กรณีเกิดข้อผิดพลาด ให้ไปที่เว็บเวอร์ชันปกติ
-    redirect("/web")
+    // กรณีเกิดข้อผิดพลาด ยังคงใช้ค่าเริ่มต้น (/web)
   }
   
-  // โค้ดส่วนนี้จะไม่ทำงานเนื่องจาก redirect จะหยุดการทำงานของ component
-  return null
+  // ทำการ redirect เพียงครั้งเดียวหลังจากการประมวลผลเสร็จสิ้น
+  redirect(destination)
 }
